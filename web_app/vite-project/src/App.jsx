@@ -135,8 +135,9 @@ function App() {
       const provider = new ethers.BrowserProvider(window.ethereum);
       const signer = await provider.getSigner();
 
-      const total = parseFloat(debt) + parseFloat(interest);
-      const totalWei = ethers.parseEther(total.toFixed(18));
+      const debtWei = ethers.parseEther(debt);
+      const interestWei = ethers.parseEther(interest);
+      const totalWei = debtWei + interestWei;
 
       const loanToken = new ethers.Contract(import.meta.env.VITE_LOAN_TOKEN_ADDRESS, LoanTokenABI, signer);
 
