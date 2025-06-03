@@ -96,43 +96,101 @@ function App() {
       loadUserData();
       checkTokenBalances();
     } catch (err) {
-      console.error("❌ Error al depositar:", err);
+      console.error("Error al depositar:", err);
       alert("Error al depositar. Revisa si aprobaste correctamente cUSD.");
     }
   }
 
 
   async function borrow() {
-    const tx = await contract.borrow(ethers.parseEther(amount));
-    await tx.wait();
-    loadUserData();
-    checkTokenBalances();
+    try {
+      const amountWei = ethers.parseEther(amount);
+
+      const provider = new ethers.BrowserProvider(window.ethereum);
+      const signer = await provider.getSigner();
+
+      const tx = await contract.connect(signer).borrow(amountWei);
+      await tx.wait();
+
+      loadUserData();
+      checkTokenBalances();
+    } catch (err) {
+      console.error("Error al pedir préstamo:", err);
+      const errorMessage = err.message;
+
+    // Buscar el mensaje específico del revert
+    const revertMatch = errorMessage.match(/reverted: \"(.+?)\"/);
+    if (revertMatch && revertMatch[1]) {
+      // Mostrar el mensaje específico del contrato
+      alert(`Error al pedir préstamo: ${revertMatch[1]}`);
+    } else {
+      // Mostrar mensaje genérico si no se encuentra un mensaje específico
+      alert("Error al pedir préstamo. Por favor, verifica los requisitos.");
+    }
+    }
   }
 
   async function repay() {
-    const totalWei = ethers.parseEther((parseFloat(debt) + parseFloat(interest)).toFixed(18));
+    try {
+      const provider = new ethers.BrowserProvider(window.ethereum);
+      const signer = await provider.getSigner();
 
-    const loanToken = new ethers.Contract(
-      import.meta.env.VITE_LOAN_TOKEN_ADDRESS,
-      LoanTokenABI,
-      await contract.runner
-    );
+      const total = parseFloat(debt) + parseFloat(interest);
+      const totalWei = ethers.parseEther(total.toFixed(18));
 
-    const approveTx = await loanToken.approve(contract.target, totalWei);
-    await approveTx.wait();
+      const loanToken = new ethers.Contract(import.meta.env.VITE_LOAN_TOKEN_ADDRESS, LoanTokenABI, signer);
 
-    const tx = await contract.repay();
-    await tx.wait();
+      const approveTx = await loanToken.approve(contract.target, totalWei);
+      await approveTx.wait();
 
-    loadUserData();
-    checkTokenBalances();
+      const tx = await contract.connect(signer).repay();
+      await tx.wait();
+
+      loadUserData();
+      checkTokenBalances();
+    } catch (err) {
+      console.error("Error al repagar préstamo:", err);
+      const errorMessage = err.message;
+      // Buscar el mensaje específico del revert
+      const revertMatch = errorMessage.match(/reverted: \"(.+?)\"/);
+      if (revertMatch && revertMatch[1]) {
+        // Mostrar el mensaje específico del contrato
+        alert(`Error al repagar préstamo: ${revertMatch[1]}`);
+      } else {
+        // Verificar si es un error de aprobación
+        if (errorMessage.includes("insufficient allowance")) {
+          alert("Error: No has aprobado suficientes tokens dDAI para el repago");
+        } else if (errorMessage.includes("insufficient balance")) {
+          alert("Error: No tienes suficientes tokens dDAI para repagar");
+        } else {
+          // Mensaje genérico si no se identifica el error específico
+          alert("Error al repagar préstamo. Verifica que tengas suficientes dDAI y hayas aprobado la transferencia.");
+        }
+      }
+    }
   }
 
   async function withdraw() {
-    const tx = await contract.withdrawCollateral();
-    await tx.wait();
-    loadUserData();
-    checkTokenBalances();
+    try {
+      const provider = new ethers.BrowserProvider(window.ethereum);
+      const signer = await provider.getSigner();
+
+      const tx = await contract.connect(signer).withdrawCollateral();
+      await tx.wait();
+
+      loadUserData();
+      checkTokenBalances();
+    } catch (err) {
+      console.error("Error al retirar colateral:", err);
+      const errorMessage = err.message;
+
+      const revertMatch = errorMessage.match(/reverted: \"(.+?)\"/);
+      if (revertMatch && revertMatch[1]) {
+        alert(`Error al retirar colateral: ${revertMatch[1]}`);
+      } else {
+        alert("Error al retirar colateral. Verifica que no tengas deudas pendientes.");
+      }
+    }
   }
 
   return (

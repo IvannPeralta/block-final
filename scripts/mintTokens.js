@@ -3,6 +3,7 @@ const hre = require("hardhat");
 async function main() {
   const [owner] = await hre.ethers.getSigners();
   const recipient = process.env.MINT_TO;
+  const contract = process.env.VITE_CONTRACT_ADDRESS;
 
   const collateralAddress = process.env.VITE_COLLATERAL_TOKEN_ADDRESS;
   const loanAddress = process.env.VITE_LOAN_TOKEN_ADDRESS;
@@ -16,6 +17,7 @@ async function main() {
 
   await CollateralToken.connect(owner).mint(recipient, amount);
   await LoanToken.connect(owner).mint(recipient, amount);
+  await LoanToken.connect(owner).mint(contract, amount);
 
   console.log("Mint completado: 1000 cUSD y 1000 dDAI");
 }

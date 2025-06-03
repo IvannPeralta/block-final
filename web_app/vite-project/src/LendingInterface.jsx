@@ -40,8 +40,10 @@ function LendingInterface({
           <div className="button-row">
             <button className="primary" onClick={deposit}>Depositar</button>
             <button className="secondary" onClick={borrow}>Pedir Préstamo</button>
-            <button onClick={repay}>Repagar</button>
-            <button className="withdraw" onClick={withdraw}>Retirar Colateral</button>
+            <button className="repay" onClick={repay} disabled={parseFloat(debt) === 0} >
+              Pagar Préstamo
+            </button>            
+            <button className="withdraw" onClick={withdraw} disabled={parseFloat(debt) != 0 || parseFloat(collateral) === 0}>Retirar Colateral</button>
           </div>
         </>
       )}
