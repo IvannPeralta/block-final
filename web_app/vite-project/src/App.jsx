@@ -72,6 +72,12 @@ function App() {
 
   async function deposit() {
     try {
+      if (amount > tokenBalances.cUSD) {
+        return alert("No tienes suficientes cUSD para depositar");
+      }
+      if (amount <= 0) {
+        return alert("El monto debe ser mayor a 0");
+      }
       const amountWei = ethers.parseEther(amount);
 
       // Obtener signer real de MetaMask
@@ -103,7 +109,10 @@ function App() {
 
 
   async function borrow() {
-    try {
+    try { 
+      if (amount <= 0) {
+        return alert("El monto debe ser mayor a 0");
+      }
       const amountWei = ethers.parseEther(amount);
 
       const provider = new ethers.BrowserProvider(window.ethereum);
