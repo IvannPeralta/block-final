@@ -1,21 +1,14 @@
-
- ## Instrucciones para conectarse a la red de MetaMask y probar la aplicación
+## Instrucciones para conectarse a la red de MetaMask y probar la aplicación
 
 ### 1. Requisitos previos
 - Tener instalado [Node.js](https://nodejs.org/)
 - Tener instalada la extensión [MetaMask](https://metamask.io/) en tu navegador
 - Instalar dependencias del proyecto ejecutando `npm install` en la raíz del proyecto y en `<ruta del proyecto>/web_app/vite-project`
 
-### 2. Generar INFURA_API_KEY
-- Iniciar sesión o crear cuenta en [Metamask Developer](https://developer.metamask.io/)
-- Crear una API KEY o copiar la existente
-- Pegar en el env de la raíz en la variable **INFURA_API_KEY**
-
-
 ### 2. Configuración de MetaMask para Sepolia
 1. En Metamask, añada una nueva red personalizada con los siguientes valores 
    - **Nombre de la red:** Sepolia Tesnet
-   - **URL RPC:** https://sepolia.infura.io/v3/tu_INFURA_API_KEY
+   - **URL RPC:** https://ethereum-sepolia-rpc.publicnode.com
    - **Chain ID:** 11155111
    - **Símbolo:** ETH
    - **URL del explorador de bloques:** https://sepolia.etherscan.io
@@ -24,7 +17,6 @@
 ### 3. Configurar envs
 1. Crear un archivo .env en la raíz del proyecto con las siguientes variables:
     - **PRIVATE_KEY** (private key de tu cuenta de metamask)
-    - **INFURA_API_KEY** (api key de developer metamask)
     - **VITE_CONTRACT_ADDRESS**
     - **VITE_COLLATERAL_TOKEN_ADDRESS**
     - **VITE_LOAN_TOKEN_ADDRESS**

@@ -72,10 +72,13 @@ function App() {
 
   async function deposit() {
     try {
-      if (amount > tokenBalances.cUSD) {
+      const amountWeiValidation = ethers.parseEther(amount);
+      const balanceWei = ethers.parseEther(tokenBalances.cUSD);
+
+      if (amountWeiValidation > balanceWei) {
         return alert("No tienes suficientes cUSD para depositar");
       }
-      if (amount <= 0) {
+      if (amountWeiValidation <= 0) {
         return alert("El monto debe ser mayor a 0");
       }
       const amountWei = ethers.parseEther(amount);
